@@ -55,7 +55,7 @@ for i in [185,120,50,10]:
     plt.imshow(plot_image)
 
 
-# In[20]: Check results using sklearn
+# In[5]: Check results using sklearn
 """      
 from sklearn.preprocessing import StandardScaler
 face = StandardScaler().fit_transform(face)

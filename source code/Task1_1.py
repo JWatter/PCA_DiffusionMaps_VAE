@@ -3,8 +3,9 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
-data_raw = np.loadtxt('pca_dataset.txt', delimiter=' ')
+data_raw = np.loadtxt("./data/pca_dataset.txt", delimiter=' ')
 samples, features = data_raw.shape
 
 # Center data
