@@ -3,9 +3,50 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.animation as animation
 
-data_raw = np.loadtxt('data_DMAP_PCA_vadere.txt', delimiter=' ')
+data_raw = np.loadtxt('../data/data_DMAP_PCA_vadere.txt', delimiter=' ')
 
+"""
+Part 1 - Visualization of trajectories
+"""
+data_x1 = data_raw[:, :2]
+data_x2 = data_raw[:, 2:4]
+
+# Split data for the pedestrians in separate x and y arrays
+x_1 = data_x1[:,0]
+y_1 = data_x1[:,1]
+x_2 = data_x2[:,0]
+y_2 = data_x2[:,1]
+
+fig, ax = plt.subplots()
+
+line_1, = ax.plot(x_1, y_1, linewidth=0.5, color='k')
+line_2, = ax.plot(x_2, y_2, linewidth=0.5, color='r')
+
+def update(num, x, y, line):
+    """
+    update function for matplotlib animation
+    Plots trajectory for inputs x and y with attributes given by line
+    """
+    line.set_data(x[:num], y[:num])
+    line.axes.axis([0, 18, 10, 25])
+    return line,
+
+# Start animation
+animation.FuncAnimation(fig, update, len(x_1),
+                              fargs=[x_1, y_1, line_1],
+                              interval=20, blit=True, repeat=False)
+
+animation.FuncAnimation(fig, update, len(x_2), 
+                              fargs=[x_2, y_2, line_2],
+                              interval=20, blit=True, repeat=False)
+
+plt.show()
+
+"""
+Part 2 - PCA
+"""
 # Normalize data to mean = 0 and standard deviation = 1
 data = (data_raw - data_raw.mean(axis=0)) / data_raw.std(axis=0)
 print('Data mean: ' + str(data.mean()))

@@ -3,21 +3,24 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 
-data_raw = np.loadtxt("./data/pca_dataset.txt", delimiter=' ')
+data_raw = np.loadtxt("../data/pca_dataset.txt", delimiter=' ')
 samples, features = data_raw.shape
 
 # Center data
 data = data_raw - data_raw.mean(axis = 0)
+n, p = data.shape
 
 #calculate SVD
 U, S, V = np.linalg.svd(data)
 
 #plt.scatter(data[:,0], data[:,1])
 
+#explained_variance = np.array((S**2) / 100) # or explained energy
+explained_variance = (S**2 / (n-1))
+explained_variance_ratio = explained_variance / np.sum(explained_variance)
+explained_variance_sum = np.cumsum(explained_variance_ratio)
 
-explained_variance = np.array((S**2) / 100) # or explained energy
 data_mean = data.mean(axis=0)
 
 #direction of the principal components
