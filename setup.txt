@@ -1,0 +1,13 @@
+black==19.10b0
+coverage>=5.0.3
+findiff>=0.8.0
+jupyter>=1.0.0
+jupyter-client>=6.0.0
+jupyter-core>=4.6.3
+matplotlib>=3.2.0
+mypy==0.750
+numpy>=1.18.1
+pandas>=1.0.1
+scikit-learn>=0.22.1,<0.23.0
+scikit-optimize>=0.7.4
+scipy>=1.4.1
