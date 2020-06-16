@@ -1,42 +1,46 @@
 import numpy as np
 from scipy.linalg import sqrtm
 
-def diffusionMaps(X, L): 
-    N = X.shape[0]
 
-    # form distance matrix D -> (N, N)
-    D = np.empty((N, N))
-    for i in range(N):
-        for j in range(i, N):
-            D[i][j] = np.linalg.norm(X[i] - X[j])
-            D[j][j] = D[i][j]
-    
-    # set epsilon
-    epsilon = 0.05 * D.max()
-    
-    # initialize kernel matrix W -> (N, N)
-    W = np.exp(-np.square(D) / epsilon)
-    
-    # form diagonal normalization matrix P -> (N, N)
-    P = np.diag(W.sum(axis=1))
+class DiffusionMaps:
+    def __init__(self):
+        self.eigenvalues = None
+        self.eigenvectors = None
 
-    # form kernel matrix K -> (N, N)
-    P_inv = np.linalg.inv(P)
-    K = P_inv @ W @ P_inv
+    def diffusionMaps(self, X, L):
 
-    # form diagonal normalization matrix Q -> (N, N)
-    Q = np.diag(K.sum(axis=1))
+        # create distance matrix D
+        N = X.shape[0]
+        D = np.empty((N, N)) 
+        for i in range(N):
+            for j in range(i, N):
+                D[i, j] = np.linalg.norm(X[i] - X[j])
+                D[j, i] = D[i, j]
+
+        epsilon = 0.05 * D.max()
+
+        # create W
+        W = np.exp(-np.square(D) / epsilon)
+
+        # create K
+        P_inv = np.linalg.inv(np.diag(W.sum(axis=1)))
+        K = P_inv @ W @ P_inv 
+
+        # create T hat
+        Q_inv_sqrt = np.linalg.inv(sqrtm(np.diag(K.sum(axis=1))))
+        T_hat = Q_inv_sqrt @ K @ Q_inv_sqrt
+
+        # get eigenvalues of T hat and sort them
+        al, vl = np.linalg.eig(T_hat)
+        indices = al.argsort()[::-1]
+        al = al[indices][:L+1]  # (L+1,)
+        vl = vl[:, indices][:, :L+1]  # (N, L+1)
+
+        self.eigenvalues = np.sqrt(al ** (1 / epsilon))[1:]  # (L+1,) -> (L,)
+
+        self.eigenvectors = (Q_inv_sqrt @ vl)[:, 1:]  # (N, N) x (N, L+1) = (N, L+1) -> (N, L)
+
+        return self.eigenvectors * self.eigenvalues.reshape(1, -1)
+
+
         
-    # form T_hat -> (N, N)
-    Q_sqrt_inv = np.linalg.inv(sqrtm(Q))
-    T_hat = Q_sqrt_inv @ K @ Q_sqrt_inv
-    
-    # find L+1 largest eigenvalues and eigenvectors of T_hat
-    values, vectors = np.linalg.eig(T_hat)
-    indices = values.argsort()[::-1]
-    al = values[indices][:L+1]
-    vl = vectors[:, indices][:, :L+1]
-
-    eigenvalues = np.sqrt(al ** (1/epsilon)) # -> (L+1, )
-    eigenvectors = (Q_sqrt_inv @ vl) # -> (N, L+1 )
-    return eigenvectors * eigenvalues
