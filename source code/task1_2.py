@@ -56,7 +56,7 @@ for i in [185,120,50,10]:
 
 
 # In[5]: Check results using sklearn
-"""      
+      
 from sklearn.preprocessing import StandardScaler
 face = StandardScaler().fit_transform(face)
 facemean = face.std()
@@ -66,6 +66,6 @@ pca = PCA(n_components=185)
 pca.fit(face)
 
 #plt.imshow(face)
-explained_variance = pca.explained_variance_ratio_
-expl_var_cumsum = np.cumsum(explained_variance)
-"""
+explained_variance_sk = pca.explained_variance_ratio_
+expl_var_cumsum_sk = np.cumsum(explained_variance_sk)
+

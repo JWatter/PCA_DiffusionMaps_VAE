@@ -104,6 +104,9 @@ from sklearn.decomposition import PCA
 pca = PCA(n_components=2)
 projected = pca.fit_transform(data)
 
+explained_variance_sk = pca.explained_variance_ratio_
+expl_var_cumsum_sk = np.cumsum(explained_variance_sk)
+
 # Plot results
 fig = plt.figure()
 plt.scatter(projected[:, 0], projected[:, 1])
